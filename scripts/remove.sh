@@ -64,5 +64,15 @@ rm -f /etc/stream.json
 OUT_ALERT "[提示] 重载服务中"
 systemctl daemon-reload
 
+if getent group stream > /dev/null 2>&1 ; then
+    OUT_ALERT "[提示] 移除用户组"
+    groupdel stream
+fi
+
+if getent passwd stream > /dev/null 2>&1 ; then
+    OUT_ALERT "[提示] 移除用户"
+    userdel -r -f stream
+fi
+
 OUT_INFO "[信息] 卸载完毕！"
 exit 0

@@ -70,10 +70,17 @@ OUT_ALERT "[提示] 复制程序中"
 cp -f stream /usr/bin
 
 OUT_ALERT "[提示] 创建用户中"
-userdel -r -f stream
-groupdel stream
-groupadd -g 1234 stream
-useradd -M -s /bin/false -u 1234 -g 1234 stream
+if ! getent group stream > /dev/null 2>&1 ; then
+    groupadd -g 1234 stream
+else
+    groupdel stream
+fi
+
+if ! getent passwd stream > /dev/null 2>&1 ; then
+    useradd -M -s /bin/false -u 1234 -g 1234 stream
+else
+    userdel -r -f stream
+fi
 
 OUT_ALERT "[提示] 配置服务中"
 cat >/etc/systemd/system/stream.service <<EOF
